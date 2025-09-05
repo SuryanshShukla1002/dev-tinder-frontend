@@ -27,10 +27,14 @@ const Requests = () => {
     <div className=" text-center my-10">
       <h1 className="text-3xl text-bold text-white">Connection Request</h1>
       {requests.map((request) => {
-        const { firstName, lastName, age, gender, photoUrl, about } = request;
+        const { _id, firstName, lastName, age, gender, photoUrl, about } =
+          request.fromUserId;
 
         return (
-          <div className="flex items-center gap-4 m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto">
+          <div
+            key={_id}
+            className="flex justify-between  items-center gap-4 m-4 p-4 rounded-lg bg-base-300 w-2/3 mx-auto"
+          >
             <div className="flex-shrink-0">
               <img
                 src={photoUrl}
@@ -46,6 +50,10 @@ const Requests = () => {
                 <p className="text-sm text-gray-400">{age + ", " + gender}</p>
               )}
               <p className="mt-1 text-sm">{about}</p>
+            </div>
+            <div>
+              <button className="btn btn-primary mx-2">Reject</button>
+              <button className="btn btn-secondary mx-2">Accept</button>
             </div>
           </div>
         );
