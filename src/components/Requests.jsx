@@ -1,8 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequests } from "../utils/requestSlice";
-import { useEffect } from "react";
+import { addRequests, removeRequest } from "../utils/requestSlice";
+import { useEffect, useState } from "react";
 
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
@@ -15,7 +15,10 @@ const Requests = () => {
         {},
         { withCredentials: true }
       );
-    } catch (err) {}
+      dispatch(removeRequest(_id));
+    } catch (err) {
+      // Handle Later
+    }
   };
 
   const fetchRequests = async () => {
@@ -25,7 +28,9 @@ const Requests = () => {
       });
 
       dispatch(addRequests(res?.data?.data));
-    } catch (err) {}
+    } catch (err) {
+      // Handle Later
+    }
   };
 
   useEffect(() => {
