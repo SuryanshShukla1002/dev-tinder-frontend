@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
+  const [error, seterror] = useState("");
 
   const reviewRequest = async (status, _id) => {
     try {
@@ -16,8 +17,9 @@ const Requests = () => {
         { withCredentials: true }
       );
       dispatch(removeRequest(_id));
+      seterror("");
     } catch (err) {
-      // Handle Later
+      seterror(err?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -29,14 +31,24 @@ const Requests = () => {
 
       dispatch(addRequests(res?.data?.data));
     } catch (err) {
-      // Handle Later
+      seterror(
+        err?.response?.data?.message ||
+          "Something went wrong in fetching request"
+      );
     }
   };
 
   useEffect(() => {
     fetchRequests();
   }, []);
-  if (!requests) return;
+  if (!requests) {
+    if (error) {
+      return (
+        <h1 className="text-center text-2xl text-red-500 my-10">{error}</h1>
+      );
+    }
+    return null;
+  }
   if (requests.length === 0)
     return (
       <h1 className="flex justify-center my-10 text-2xl">No Requests found</h1>
