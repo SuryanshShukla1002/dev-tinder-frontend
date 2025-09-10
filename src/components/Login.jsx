@@ -33,6 +33,25 @@ const Login = () => {
     }
   };
 
+  const handleSignupClick = async () => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        {
+          firstName,
+          lastName,
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res?.data?.data));
+      return navigate("/");
+    } catch (err) {
+      setError(err?.response?.data || "Something went wrong");
+    }
+  };
+
   return (
     <div className="flex justify-center my-10">
       <div className="card bg-base-300 w-96 shadow-sm">
@@ -72,7 +91,7 @@ const Login = () => {
                 <span className="label-text">Email ID</span>
               </div>
               <input
-                type="text"
+                type="email"
                 value={emailId}
                 className="input input-bordered w-full max-w-xs mb-2"
                 onChange={(e) => setEmailId(e.target.value)}
@@ -83,7 +102,7 @@ const Login = () => {
                 <span className="label-text">Password</span>
               </div>
               <input
-                type="text"
+                type="password"
                 value={password}
                 className="input input-bordered w-full max-w-xs mb-2"
                 onChange={(e) => setPassword(e.target.value)}
@@ -92,10 +111,19 @@ const Login = () => {
           </div>
           <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center m-2">
-            <button className="btn btn-primary" onClick={handleLoginClick}>
+            <button
+              className="btn btn-primary"
+              onClick={isLoginForm ? handleLoginClick : handleSignupClick}
+            >
               {isLoginForm ? "Login" : "Sign Up"}
             </button>
           </div>
+          <p
+            className="cursor-pointer m-auto py-2"
+            onClick={() => setIsLoginForm((value) => !value)}
+          >
+            {isLoginForm ? "New User? Sigup here" : "Existing User? Login here"}
+          </p>
         </div>
       </div>
     </div>
