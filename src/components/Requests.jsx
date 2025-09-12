@@ -11,7 +11,7 @@ const Requests = () => {
 
   const reviewRequest = async (status, _id) => {
     try {
-      const res = axios.post(
+      const res = await axios.post(
         BASE_URL + "/request/review/" + status + "/" + _id,
         {},
         { withCredentials: true }
@@ -41,6 +41,7 @@ const Requests = () => {
   useEffect(() => {
     fetchRequests();
   }, []);
+  
   if (!requests) {
     if (error) {
       return (
