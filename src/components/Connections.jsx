@@ -3,6 +3,7 @@ import { BASE_URL } from "../utils/constants";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const connections = useSelector((store) => store.connections);
@@ -51,7 +52,7 @@ const Connections = () => {
         return (
           <div
             key={_id}
-            className="flex items-center gap-4 m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto"
+            className="flex  items-center gap-4 m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto"
           >
             <div className="flex-shrink-0">
               <img
@@ -69,6 +70,11 @@ const Connections = () => {
               )}
               <p className="mt-1 text-sm">{about}</p>
             </div>
+            <Link to={`/chat/${_id}`}>
+              <button className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all duration-200">
+                Chat
+              </button>
+            </Link>
           </div>
         );
       })}
