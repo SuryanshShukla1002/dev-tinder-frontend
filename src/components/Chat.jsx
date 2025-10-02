@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
 
 const Chat = () => {
   const { targetUserId } = useParams();
@@ -12,6 +14,26 @@ const Chat = () => {
   const user = useSelector((store) => store.user);
   const userId = user?._id;
 
+  const fetchChatMessages = async () => {
+    const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+      withCredentials: true,
+    });
+    // Start 1hr + min Open Two chats Suryansh and pushpa Mongodb +
+    console.log(chat.data.messages);
+
+    const chatMessages = chat?.data?.messages.map((meg) => {
+      const { senderId, text } = meg;
+      return {
+        firstName: senderId?.firstName,
+        lastName: senderId?.lastName,
+        text,
+      };
+    });
+    setMessages(chatMessages);
+  };
+  useEffect(() => {
+    fetchChatMessages();
+  }, []);
   useEffect(() => {
     if (!userId) {
       return;
@@ -23,18 +45,20 @@ const Chat = () => {
       targetUserId,
     });
 
-    socket.on("messageReceived", ({ firstName, text }) => {
+    socket.on("messageReceived", ({ firstName, lastName, text }) => {
       // console.log(firstName + " : " + text);
-      setMessages((messages) => [...messages, { firstName, text }]);
+      setMessages((messages) => [...messages, { firstName, lastName, text }]);
     });
     return () => {
       socket.disconnect();
     };
   }, [userId, targetUserId]);
+
   const sendMessage = () => {
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
       firstName: user.firstName,
+      lastName: user.lastName,
       userId,
       targetUserId,
       text: newMessage,
@@ -48,12 +72,29 @@ const Chat = () => {
         {/* Display text messages */}
         {messages.map((message, index) => {
           return (
-            <div key={index} className="chat chat-start">
+            <div
+              key={index}
+              className={
+                "chat " +
+                (user.firstName == message.firstName
+                  ? "chat-end "
+                  : "chat-start")
+              }
+            >
               <div className="chat-header">
-                {message.firstName}
+                {message.firstName + " " + message.lastName}
                 <time className="text-xs opacity-50">2 hours ago</time>
               </div>
-              <div className="chat-bubble">{message.text}</div>
+              <div
+                className={
+                  "chat-bubble " +
+                  (user.firstName == message.firstName
+                    ? "chat-bubble-primary"
+                    : "chat-bubble-secondary")
+                }
+              >
+                {message.text}
+              </div>
               <div className="chat-footer opacity-50">Seen</div>
             </div>
           );
@@ -66,7 +107,7 @@ const Chat = () => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <button onClick={sendMessage} className="btn btn-secondary">
+        <button onClick={sendMessage} className="btn btn-success text-black">
           Send
         </button>
       </div>
