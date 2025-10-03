@@ -18,8 +18,8 @@ const Chat = () => {
     const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
       withCredentials: true,
     });
-    // Start 1hr + min Open Two chats Suryansh and pushpa Mongodb +
-    console.log(chat.data.messages);
+
+    // console.log(chat.data.messages);
 
     const chatMessages = chat?.data?.messages.map((meg) => {
       const { senderId, text } = meg;
